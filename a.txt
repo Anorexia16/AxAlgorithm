@@ -1,0 +1,63 @@
+#include <cstdio>
+
+int *grp;
+bool *up, *down;
+
+inline int read () {
+    int x{}, c=getchar();
+    while(c>'9'||c<'0') c=getchar();
+    while(c>='0'&&c<='9') {x=10*x+c-'0';c=getchar();}
+    return x;
+}
+
+struct node {
+    int x, y, z;
+};
+node *arr;
+
+inline int dis (node const &a, node const &b) {
+    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z);
+}
+
+int find(int x) {
+    int r{}, tp;
+    while(r!=grp[r]) {
+        r=grp[r];
+    }
+    while(x!=r) {
+        tp=x;
+        x=grp[x];
+        grp[tp]=r;
+    }
+    return r;
+}
+
+int main() {
+    int mis=read(), n, h, r, x, y, z, yf;
+    while(mis--) {
+        n=read(), h=read(), r=read(), yf= false;
+        arr= new node [n];
+        grp = new int [n];
+        up = new bool [n]{};
+        down = new bool [n]{};
+        for(int i=0;i!=n;++i) grp[i]=i;
+        for(int i=0;i!=n;++i) {
+            x=read(), y=read(), z=read();
+            arr[i] = node{x, y, z};
+            up[i]=z+r>=h, down[i]=r>=z;
+            for(int j=0;j<i;++j) {
+                if(dis(arr[i], arr[j])<=4*r*r) {
+                    grp[i] = find(j);
+                    up[j] = up[j]||up[i];
+                    down[j] = down[j]||down[i];
+                }
+            }
+        }
+        for(int i=0;i!=n;++i) {
+            if(up[i]&&down[i]) {
+                yf= true;printf("Yes\n");break;
+            }
+        }
+        if(!yf) printf("No\n");
+    }
+}
